@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Neon Hand Motion</title>
+    <title>Masbow Hand Motion</title>
 
-    <!-- MEDIA PIPE -->
+    <!-- MediaPipe -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -28,93 +27,59 @@
             font-family: Arial, sans-serif;
         }
 
-        /* ==============================
-           KAMERA
-        ============================== */
-
         #video {
             position: fixed;
             inset: 0;
-
             width: 100%;
             height: 100%;
-
             object-fit: cover;
-
             transform: scaleX(-1);
 
             filter:
-                brightness(0.38)
+                brightness(0.35)
                 contrast(1.3)
                 saturate(1.2);
 
             z-index: 1;
         }
 
-
-        /* ==============================
-           CANVAS
-        ============================== */
-
         #canvas {
             position: fixed;
             inset: 0;
-
             width: 100%;
             height: 100%;
-
             transform: scaleX(-1);
-
             z-index: 2;
-
             pointer-events: none;
         }
-
-
-        /* ==============================
-           OVERLAY
-        ============================== */
 
         .overlay {
             position: fixed;
             inset: 0;
-
             z-index: 3;
-
             pointer-events: none;
 
             background:
                 radial-gradient(
                     circle at center,
                     rgba(0,255,255,0.08),
-                    rgba(0,0,0,0.35) 40%,
-                    rgba(0,0,0,0.85) 100%
+                    rgba(0,0,0,0.35) 45%,
+                    rgba(0,0,0,0.9)
                 );
         }
 
-
-        /* ==============================
-           JUDUL
-        ============================== */
-
         .title {
             position: fixed;
-
             top: 25px;
             left: 50%;
-
             transform: translateX(-50%);
 
             z-index: 10;
 
             color: white;
-
             font-size: clamp(22px, 4vw, 42px);
-
             font-weight: bold;
-
             letter-spacing: 6px;
-
             text-align: center;
 
             text-shadow:
@@ -124,27 +89,17 @@
                 0 0 60px #0088ff;
         }
 
-
-        /* ==============================
-           STATUS
-        ============================== */
-
         #status {
             position: fixed;
-
             top: 82px;
             left: 50%;
-
             transform: translateX(-50%);
 
             z-index: 10;
 
             color: white;
-
             font-size: 13px;
-
             letter-spacing: 2px;
-
             text-align: center;
 
             text-shadow:
@@ -152,10 +107,19 @@
                 0 0 10px #00ffff;
         }
 
+        #gestureInfo {
+            position: fixed;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
 
-        /* ==============================
-           PESAN
-        ============================== */
+            z-index: 10;
+
+            color: rgba(255,255,255,0.75);
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
 
         #message {
             position: fixed;
@@ -165,9 +129,9 @@
 
             transform:
                 translate(-50%, -50%)
-                scale(0.6);
+                scale(0.5);
 
-            width: 90%;
+            width: 92%;
 
             z-index: 8;
 
@@ -175,19 +139,19 @@
 
             color: white;
 
-            font-size: clamp(35px, 7vw, 90px);
+            font-size: clamp(32px, 7vw, 90px);
 
             font-weight: 900;
 
-            letter-spacing: 4px;
+            letter-spacing: 3px;
 
             opacity: 0;
 
             pointer-events: none;
 
             transition:
-                opacity 0.35s ease,
-                transform 0.35s ease;
+                opacity 0.4s ease,
+                transform 0.4s ease;
 
             text-shadow:
                 0 0 5px #00ffff,
@@ -197,7 +161,6 @@
                 0 0 80px #0055ff;
         }
 
-
         #message.show {
             opacity: 1;
 
@@ -206,19 +169,13 @@
                 scale(1);
         }
 
-
         #message.hide {
             opacity: 0;
 
             transform:
                 translate(-50%, -50%)
-                scale(0.6);
+                scale(0.5);
         }
-
-
-        /* ==============================
-           PARTIKEL HTML
-        ============================== */
 
         .particle {
             position: fixed;
@@ -240,23 +197,19 @@
             pointer-events: none;
 
             animation:
-                particleMove 1.2s linear forwards;
+                particleMove 1.3s linear forwards;
         }
 
-
         @keyframes particleMove {
-
             0% {
                 opacity: 1;
-
                 transform:
-                    translate(0, 0)
+                    translate(0,0)
                     scale(1);
             }
 
             100% {
                 opacity: 0;
-
                 transform:
                     translate(
                         var(--moveX),
@@ -264,13 +217,7 @@
                     )
                     scale(0);
             }
-
         }
-
-
-        /* ==============================
-           TOMBOL MUSIK
-        ============================== */
 
         #musicBtn {
             position: fixed;
@@ -296,21 +243,7 @@
             box-shadow:
                 0 0 8px #00ffff,
                 inset 0 0 8px rgba(0,255,255,0.2);
-
-            transition: 0.3s;
         }
-
-
-        #musicBtn:hover {
-            box-shadow:
-                0 0 15px #00ffff,
-                0 0 30px #0088ff;
-        }
-
-
-        /* ==============================
-           PETUNJUK
-        ============================== */
 
         .instruction {
             position: fixed;
@@ -326,15 +259,10 @@
 
             font-size: 12px;
 
-            letter-spacing: 2px;
+            letter-spacing: 1px;
 
             text-align: center;
         }
-
-
-        /* ==============================
-           RESPONSIVE
-        ============================== */
 
         @media(max-width:600px) {
 
@@ -348,14 +276,20 @@
                 font-size: 10px;
             }
 
+            #gestureInfo {
+                top: 82px;
+                font-size: 9px;
+            }
+
             #message {
-                font-size: 36px;
-                letter-spacing: 2px;
+                font-size: 35px;
+                letter-spacing: 1px;
             }
 
             .instruction {
                 bottom: 70px;
                 font-size: 10px;
+                width: 90%;
             }
 
             #musicBtn {
@@ -364,892 +298,1050 @@
                 padding: 10px 13px;
                 font-size: 11px;
             }
-
         }
-
     </style>
-
 </head>
 
 <body>
 
+<video
+    id="video"
+    autoplay
+    muted
+    playsinline>
+</video>
 
-    <!-- =====================================
-         VIDEO KAMERA
-    ====================================== -->
+<canvas id="canvas"></canvas>
 
-    <video
-        id="video"
-        autoplay
-        muted
-        playsinline>
-    </video>
+<div class="overlay"></div>
 
+<div class="title">
+    MASBOW HAND MOTION
+</div>
 
-    <!-- =====================================
-         CANVAS
-    ====================================== -->
+<div id="status">
+    MENGAKTIFKAN KAMERA...
+</div>
 
-    <canvas id="canvas"></canvas>
+<div id="gestureInfo">
+    Gunakan gesture tangan yang sesuai
+</div>
 
+<div id="message"></div>
 
-    <!-- =====================================
-         OVERLAY
-    ====================================== -->
+<div class="instruction">
+    ✋ Buat gesture tangan untuk menampilkan pesan ✨
+</div>
 
-    <div class="overlay"></div>
+<button id="musicBtn">
+    🎵 Musik
+</button>
 
+<script>
 
-    <!-- =====================================
-         JUDUL
-    ====================================== -->
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-    <div class="title">
-        NEON HAND MOTION
-    </div>
-
-
-    <!-- =====================================
-         STATUS
-    ====================================== -->
-
-    <div id="status">
-        MENGAKTIFKAN KAMERA...
-    </div>
-
-
-    <!-- =====================================
-         PESAN
-    ====================================== -->
-
-    <div id="message"></div>
+const message = document.getElementById("message");
+const status = document.getElementById("status");
+const gestureInfo = document.getElementById("gestureInfo");
+const musicBtn = document.getElementById("musicBtn");
 
 
-    <!-- =====================================
-         PETUNJUK
-    ====================================== -->
+/* =====================================================
+   CANVAS
+===================================================== */
 
-    <div class="instruction">
-        ✋ Gerakkan tangan untuk memunculkan pesan ✨
-    </div>
+function resizeCanvas() {
 
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    <!-- =====================================
-         MUSIK
-    ====================================== -->
+}
 
-    <button id="musicBtn">
-        🎵 Putar Musik
-    </button>
+resizeCanvas();
 
-
-    <script>
-
-        /* =================================================
-           ELEMENT
-        ================================================= */
-
-        const video =
-            document.getElementById("video");
-
-        const canvas =
-            document.getElementById("canvas");
-
-        const ctx =
-            canvas.getContext("2d");
-
-        const message =
-            document.getElementById("message");
-
-        const status =
-            document.getElementById("status");
-
-        const musicBtn =
-            document.getElementById("musicBtn");
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
 
 
-        /* =================================================
-           CANVAS
-        ================================================= */
+/* =====================================================
+   DATA PESAN + GESTURE
+===================================================== */
 
-        function resizeCanvas() {
+const messages = [
 
-            canvas.width =
-                window.innerWidth;
+    {
+        text: "I LOVE YOU ❤️",
+        gesture: "❤️ Bentuk LOVE dengan kedua tangan",
+        type: "love"
+    },
 
-            canvas.height =
-                window.innerHeight;
+    {
+        text: "YOU ARE SPECIAL ✨",
+        gesture: "🖐️ Buka telapak tangan",
+        type: "open"
+    },
 
-        }
+    {
+        text: "KEEP SMILING 😊",
+        gesture: "👍 Dua jempol ke atas",
+        type: "doubleThumb"
+    },
 
-        resizeCanvas();
+    {
+        text: "NEVER GIVE UP 🔥",
+        gesture: "✊ Kepalkan tangan",
+        type: "fist"
+    },
 
-        window.addEventListener(
-            "resize",
-            resizeCanvas
+    {
+        text: "YOU CAN DO IT ⚡",
+        gesture: "👍 Jempol ke atas",
+        type: "thumb"
+    },
+
+    {
+        text: "STAY AWESOME 💙",
+        gesture: "✌️ Buat tanda peace",
+        type: "peace"
+    },
+
+    {
+        text: "BELIEVE IN YOURSELF 🌟",
+        gesture: "☝️ Tunjuk ke atas",
+        type: "point"
+    },
+
+    {
+        text: "FOLLOW YOUR DREAMS 💫",
+        gesture: "☝️ Gerakkan telunjuk",
+        type: "movePoint"
+    }
+
+];
+
+
+let currentMessage = 0;
+let lastGesture = "";
+let gestureCooldown = 0;
+
+
+/* =====================================================
+   TAMPILKAN PESAN
+===================================================== */
+
+function showMessage(index) {
+
+    message.classList.remove("show");
+
+    message.classList.add("hide");
+
+    setTimeout(() => {
+
+        message.textContent =
+            messages[index].text;
+
+        gestureInfo.textContent =
+            messages[index].gesture;
+
+        message.classList.remove("hide");
+
+        message.classList.add("show");
+
+    }, 150);
+
+}
+
+
+/* =====================================================
+   SEMBUNYIKAN PESAN
+===================================================== */
+
+function hideMessage() {
+
+    message.classList.remove("show");
+
+    message.classList.add("hide");
+
+}
+
+
+/* =====================================================
+   PARTICLE
+===================================================== */
+
+function createParticle(x, y) {
+
+    const particle =
+        document.createElement("div");
+
+    particle.className =
+        "particle";
+
+    particle.style.left =
+        x + "px";
+
+    particle.style.top =
+        y + "px";
+
+    particle.style.setProperty(
+        "--moveX",
+        ((Math.random() - 0.5) * 220) + "px"
+    );
+
+    particle.style.setProperty(
+        "--moveY",
+        ((Math.random() - 0.5) * 220) + "px"
+    );
+
+    document.body.appendChild(
+        particle
+    );
+
+    setTimeout(() => {
+
+        particle.remove();
+
+    }, 1300);
+
+}
+
+
+function createParticles(
+    x,
+    y,
+    amount = 6
+) {
+
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
+
+        createParticle(
+
+            x +
+            (Math.random() - 0.5) * 60,
+
+            y +
+            (Math.random() - 0.5) * 60
+
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   JARAK DUA TITIK
+===================================================== */
+
+function distance(a,b) {
+
+    return Math.sqrt(
+
+        Math.pow(a.x-b.x,2) +
+
+        Math.pow(a.y-b.y,2)
+
+    );
+
+}
+
+
+/* =====================================================
+   JARI TERBUKA
+===================================================== */
+
+function fingerExtended(
+    landmarks,
+    tip,
+    pip
+) {
+
+    return (
+        distance(
+            landmarks[tip],
+            landmarks[0]
+        )
+        >
+        distance(
+            landmarks[pip],
+            landmarks[0]
+        )
+    );
+
+}
+
+
+/* =====================================================
+   HITUNG JARI TERBUKA
+===================================================== */
+
+function countOpenFingers(hand) {
+
+    let count = 0;
+
+    if (
+        fingerExtended(hand,8,6)
+    ) count++;
+
+    if (
+        fingerExtended(hand,12,10)
+    ) count++;
+
+    if (
+        fingerExtended(hand,16,14)
+    ) count++;
+
+    if (
+        fingerExtended(hand,20,18)
+    ) count++;
+
+    return count;
+
+}
+
+
+/* =====================================================
+   DETEKSI THUMB
+===================================================== */
+
+function thumbUp(hand) {
+
+    const thumb =
+        hand[4];
+
+    const thumbBase =
+        hand[2];
+
+    return (
+        thumb.y <
+        thumbBase.y - 0.08
+    );
+
+}
+
+
+/* =====================================================
+   DETEKSI PEACE
+===================================================== */
+
+function isPeace(hand) {
+
+    const index =
+        fingerExtended(hand,8,6);
+
+    const middle =
+        fingerExtended(hand,12,10);
+
+    const ring =
+        fingerExtended(hand,16,14);
+
+    const pinky =
+        fingerExtended(hand,20,18);
+
+    return (
+        index &&
+        middle &&
+        !ring &&
+        !pinky
+    );
+
+}
+
+
+/* =====================================================
+   DETEKSI POINT
+===================================================== */
+
+function isPoint(hand) {
+
+    const index =
+        fingerExtended(hand,8,6);
+
+    const middle =
+        fingerExtended(hand,12,10);
+
+    const ring =
+        fingerExtended(hand,16,14);
+
+    const pinky =
+        fingerExtended(hand,20,18);
+
+    return (
+        index &&
+        !middle &&
+        !ring &&
+        !pinky
+    );
+
+}
+
+
+/* =====================================================
+   DETEKSI LOVE
+===================================================== */
+
+function isLove(
+    handsList
+) {
+
+    if (
+        handsList.length < 2
+    ) {
+
+        return false;
+
+    }
+
+    const hand1 =
+        handsList[0];
+
+    const hand2 =
+        handsList[1];
+
+
+    const thumb1 =
+        hand1[4];
+
+    const thumb2 =
+        hand2[4];
+
+    const index1 =
+        hand1[8];
+
+    const index2 =
+        hand2[8];
+
+
+    const thumbDistance =
+        distance(
+            thumb1,
+            thumb2
         );
 
 
-        /* =================================================
-           DAFTAR PESAN
-        ================================================= */
+    const indexDistance =
+        distance(
+            index1,
+            index2
+        );
 
-        const messages = [
 
-            "I LOVE YOU ❤️",
+    /*
+       Kedua ibu jari dan
+       kedua telunjuk harus
+       saling berdekatan.
+    */
 
-            "YOU ARE SPECIAL ✨",
+    return (
+        thumbDistance < 0.20 &&
+        indexDistance < 0.20
+    );
 
-            "KEEP SMILING 😊",
+}
 
-            "NEVER GIVE UP 🔥",
 
-            "YOU CAN DO IT ⚡",
+/* =====================================================
+   DETEKSI GESTURE
+===================================================== */
 
-            "STAY AWESOME 💙",
+function detectGesture(
+    handsList
+) {
 
-            "BELIEVE IN YOURSELF 🌟",
+    const now =
+        Date.now();
 
-            "FOLLOW YOUR DREAMS 💫"
 
-        ];
+    if (
+        now < gestureCooldown
+    ) {
 
+        return;
 
-        let messageIndex = 0;
+    }
 
 
-        /* =================================================
-           STATUS GERAKAN
-        ================================================= */
+    /* =============================================
+       LOVE
+    ============================================= */
 
-        let handDetected = false;
+    if (
+        isLove(handsList)
+    ) {
 
-        let lastX = null;
+        triggerGesture(
+            "love"
+        );
 
-        let lastY = null;
+        return;
 
-        let lastChange = 0;
+    }
 
 
-        /* =================================================
-           TAMPILKAN PESAN
-        ================================================= */
+    if (
+        handsList.length === 0
+    ) {
 
-        function showMessage() {
+        return;
 
-            message.classList.remove("show");
+    }
 
-            message.classList.add("hide");
 
+    const hand =
+        handsList[0];
 
-            setTimeout(() => {
 
-                message.textContent =
-                    messages[messageIndex];
+    const open =
+        countOpenFingers(hand);
 
 
-                messageIndex++;
+    const thumb =
+        thumbUp(hand);
 
-                if (
-                    messageIndex >=
-                    messages.length
-                ) {
 
-                    messageIndex = 0;
+    const peace =
+        isPeace(hand);
 
-                }
 
+    const point =
+        isPoint(hand);
 
-                message.classList.remove("hide");
 
-                message.classList.add("show");
+    /* =============================================
+       DUA JEMPOL
+    ============================================= */
 
-            }, 200);
+    if (
+        handsList.length >= 2 &&
+        thumbUp(handsList[0]) &&
+        thumbUp(handsList[1])
+    ) {
 
-        }
+        triggerGesture(
+            "doubleThumb"
+        );
 
+        return;
 
-        /* =================================================
-           SEMBUNYIKAN PESAN
-        ================================================= */
+    }
 
-        function hideMessage() {
 
-            message.classList.remove("show");
+    /* =============================================
+       TELAPAK TERBUKA
+    ============================================= */
 
-            message.classList.add("hide");
+    if (
+        open >= 4
+    ) {
 
-        }
+        triggerGesture(
+            "open"
+        );
 
+        return;
 
-        /* =================================================
-           PARTIKEL
-        ================================================= */
+    }
 
-        function createParticle(x, y) {
 
-            const particle =
-                document.createElement("div");
+    /* =============================================
+       PEACE
+    ============================================= */
 
-            particle.className =
-                "particle";
+    if (peace) {
 
+        triggerGesture(
+            "peace"
+        );
 
-            particle.style.left =
-                x + "px";
+        return;
 
+    }
 
-            particle.style.top =
-                y + "px";
 
+    /* =============================================
+       THUMB UP
+    ============================================= */
 
-            const moveX =
-                (Math.random() - 0.5) * 180;
+    if (
+        thumb &&
+        open <= 1
+    ) {
 
+        triggerGesture(
+            "thumb"
+        );
 
-            const moveY =
-                (Math.random() - 0.5) * 180;
+        return;
 
+    }
 
-            particle.style.setProperty(
-                "--moveX",
-                moveX + "px"
-            );
 
+    /* =============================================
+       POINT
+    ============================================= */
 
-            particle.style.setProperty(
-                "--moveY",
-                moveY + "px"
-            );
+    if (point) {
 
+        triggerGesture(
+            "point"
+        );
 
-            document.body.appendChild(
-                particle
-            );
+    }
 
+}
 
-            setTimeout(() => {
 
-                particle.remove();
+/* =====================================================
+   AKSI GESTURE
+===================================================== */
 
-            }, 1200);
+function triggerGesture(
+    gesture
+) {
 
-        }
+    if (
+        gesture === lastGesture
+    ) {
 
+        return;
 
-        /* =================================================
-           BANYAK PARTIKEL
-        ================================================= */
+    }
 
-        function createParticles(
-            x,
-            y,
-            jumlah = 5
+
+    lastGesture =
+        gesture;
+
+
+    gestureCooldown =
+        Date.now() + 1200;
+
+
+    const index =
+        messages.findIndex(
+            item =>
+                item.type === gesture
+        );
+
+
+    if (
+        index === -1
+    ) {
+
+        return;
+
+    }
+
+
+    currentMessage =
+        index;
+
+
+    showMessage(
+        index
+    );
+
+
+    status.textContent =
+        "✨ GESTURE TERDETEKSI";
+
+
+    createParticles(
+        canvas.width / 2,
+        canvas.height / 2,
+        20
+    );
+
+}
+
+
+/* =====================================================
+   MEDIAPIPE
+===================================================== */
+
+const hands =
+    new Hands({
+
+        locateFile:
+            function(file) {
+
+                return (
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" +
+                    file
+                );
+
+            }
+
+    });
+
+
+hands.setOptions({
+
+    maxNumHands: 2,
+
+    modelComplexity: 1,
+
+    minDetectionConfidence: 0.6,
+
+    minTrackingConfidence: 0.6
+
+});
+
+
+/* =====================================================
+   HASIL HAND TRACKING
+===================================================== */
+
+hands.onResults(
+    function(results) {
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        if (
+            results.image
         ) {
 
-            for (
-                let i = 0;
-                i < jumlah;
-                i++
-            ) {
+            ctx.drawImage(
 
-                createParticle(
+                results.image,
 
-                    x +
-                    (Math.random() - 0.5) * 50,
+                0,
+                0,
 
-                    y +
-                    (Math.random() - 0.5) * 50
-
-                );
-
-            }
-
-        }
-
-
-        /* =================================================
-           MEDIAPIPE
-        ================================================= */
-
-        const hands =
-            new Hands({
-
-                locateFile:
-                    function(file) {
-
-                        return (
-                            "https://cdn.jsdelivr.net/npm/@mediapipe/hands/" +
-                            file
-                        );
-
-                    }
-
-            });
-
-
-        hands.setOptions({
-
-            maxNumHands: 2,
-
-            modelComplexity: 1,
-
-            minDetectionConfidence: 0.55,
-
-            minTrackingConfidence: 0.55
-
-        });
-
-
-        /* =================================================
-           HASIL DETEKSI TANGAN
-        ================================================= */
-
-        hands.onResults(
-            function(results) {
-
-
-                /* =========================================
-                   BERSIHKAN CANVAS
-                ========================================= */
-
-                ctx.clearRect(
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
-
-
-                /* =========================================
-                   GAMBAR KAMERA
-                ========================================= */
-
-                if (results.image) {
-
-                    ctx.drawImage(
-
-                        results.image,
-
-                        0,
-                        0,
-
-                        canvas.width,
-                        canvas.height
-
-                    );
-
-                }
-
-
-                /* =========================================
-                   CEK TANGAN
-                ========================================= */
-
-                if (
-
-                    results.multiHandLandmarks &&
-
-                    results.multiHandLandmarks.length > 0
-
-                ) {
-
-
-                    /* =====================================
-                       TANGAN BARU TERDETEKSI
-                    ===================================== */
-
-                    if (!handDetected) {
-
-                        handDetected = true;
-
-                        lastX = null;
-
-                        lastY = null;
-
-                        showMessage();
-
-                    }
-
-
-                    status.textContent =
-                        "✋ TANGAN TERDETEKSI";
-
-                    status.style.color =
-                        "#00ffff";
-
-
-                    /* =====================================
-                       LOOP SETIAP TANGAN
-                    ===================================== */
-
-                    for (
-
-                        const landmarks
-
-                        of
-                        results.multiHandLandmarks
-
-                    ) {
-
-
-                        /* =================================
-                           GARIS TANGAN
-                        ================================= */
-
-                        drawConnectors(
-
-                            ctx,
-
-                            landmarks,
-
-                            HAND_CONNECTIONS,
-
-                            {
-
-                                color: "#00ffff",
-
-                                lineWidth: 4
-
-                            }
-
-                        );
-
-
-                        /* =================================
-                           TITIK JARI
-                        ================================= */
-
-                        drawLandmarks(
-
-                            ctx,
-
-                            landmarks,
-
-                            {
-
-                                color: "#ffffff",
-
-                                fillColor: "#00ffff",
-
-                                lineWidth: 2,
-
-                                radius: 5
-
-                            }
-
-                        );
-
-
-                        /* =================================
-                           JARI TELUNJUK
-                           LANDMARK 8
-                        ================================= */
-
-                        const finger =
-                            landmarks[8];
-
-
-                        const x =
-                            finger.x *
-                            canvas.width;
-
-
-                        const y =
-                            finger.y *
-                            canvas.height;
-
-
-                        /* =================================
-                           LINGKARAN DI UJUNG JARI
-                        ================================= */
-
-                        ctx.beginPath();
-
-
-                        ctx.arc(
-
-                            x,
-
-                            y,
-
-                            20,
-
-                            0,
-
-                            Math.PI * 2
-
-                        );
-
-
-                        ctx.strokeStyle =
-                            "#00ffff";
-
-
-                        ctx.lineWidth = 3;
-
-
-                        ctx.shadowColor =
-                            "#00ffff";
-
-
-                        ctx.shadowBlur = 25;
-
-
-                        ctx.stroke();
-
-
-                        ctx.shadowBlur = 0;
-
-
-                        /* =================================
-                           PARTIKEL SAAT TANGAN BERGERAK
-                        ================================= */
-
-                        if (
-
-                            lastX !== null &&
-
-                            lastY !== null
-
-                        ) {
-
-
-                            const distance =
-
-                                Math.sqrt(
-
-                                    Math.pow(
-                                        x - lastX,
-                                        2
-                                    )
-
-                                    +
-
-                                    Math.pow(
-                                        y - lastY,
-                                        2
-                                    )
-
-                                );
-
-
-                            /* =============================
-                               TANGAN BENAR-BENAR BERGERAK
-                            ============================= */
-
-                            if (distance > 5) {
-
-                                const jumlah =
-
-                                    Math.min(
-
-                                        15,
-
-                                        Math.max(
-
-                                            3,
-
-                                            Math.floor(
-                                                distance / 4
-                                            )
-
-                                        )
-
-                                    );
-
-
-                                createParticles(
-
-                                    x,
-
-                                    y,
-
-                                    jumlah
-
-                                );
-
-
-                                /* =============================
-                                   GANTI PESAN BERDASARKAN GERAKAN
-                                ============================= */
-
-                                const now =
-                                    Date.now();
-
-
-                                if (
-
-                                    distance > 45 &&
-
-                                    now -
-                                    lastChange
-                                    > 1200
-
-                                ) {
-
-                                    showMessage();
-
-                                    lastChange =
-                                        now;
-
-                                }
-
-                            }
-
-                        }
-
-
-                        /* =================================
-                           SIMPAN POSISI SEBELUMNYA
-                        ================================= */
-
-                        lastX = x;
-
-                        lastY = y;
-
-                    }
-
-                }
-
-
-                /* =========================================
-                   TANGAN TIDAK TERDETEKSI
-                ========================================= */
-
-                else {
-
-                    if (handDetected) {
-
-                        handDetected = false;
-
-                        lastX = null;
-
-                        lastY = null;
-
-                        hideMessage();
-
-                    }
-
-
-                    status.textContent =
-                        "👋 Arahkan tangan ke kamera";
-
-                    status.style.color =
-                        "#ffffff";
-
-                }
-
-            }
-        );
-
-
-        /* =================================================
-           CAMERA
-        ================================================= */
-
-        const camera =
-            new Camera(
-
-                video,
-
-                {
-
-                    onFrame:
-                        async function() {
-
-                            await hands.send({
-
-                                image: video
-
-                            });
-
-                        },
-
-
-                    width: 1280,
-
-                    height: 720
-
-                }
+                canvas.width,
+                canvas.height
 
             );
 
-
-        /* =================================================
-           START CAMERA
-        ================================================= */
-
-        async function startCamera() {
-
-            try {
-
-                await navigator
-                    .mediaDevices
-                    .getUserMedia({
-
-                        video: true
-
-                    })
-                    .then(
-                        stream => {
-
-                            stream
-                                .getTracks()
-                                .forEach(
-                                    track =>
-                                        track.stop()
-                                );
-
-                        }
-                    );
-
-
-                camera.start();
-
-
-                status.textContent =
-                    "KAMERA AKTIF — ARAHKAN TANGAN";
-
-
-            }
-
-            catch (error) {
-
-                console.error(error);
-
-
-                status.textContent =
-                    "❌ IZINKAN AKSES KAMERA";
-
-
-                status.style.color =
-                    "#ff4444";
-
-            }
-
         }
 
 
-        startCamera();
+        const handList =
+            results.multiHandLandmarks || [];
 
 
-        /* =================================================
-           MUSIK
-        ================================================= */
+        if (
+            handList.length > 0
+        ) {
 
-        const music =
-            new Audio("musik.mp3");
+            status.textContent =
+                "✋ GERAKKAN TANGAN SESUAI PETUNJUK";
 
-
-        music.loop = true;
-
-        music.volume = 0.7;
-
-        music.preload = "auto";
+            status.style.color =
+                "#00ffff";
 
 
-        /* =================================================
-           PUTAR MUSIK
-        ================================================= */
+            for (
+                const landmarks
+                of handList
+            ) {
 
-        async function playMusic() {
+                drawConnectors(
 
-            try {
+                    ctx,
 
-                await music.play();
+                    landmarks,
 
-                musicBtn.textContent =
-                    "⏸️ Matikan Musik";
+                    HAND_CONNECTIONS,
 
-            }
+                    {
+                        color: "#00ffff",
+                        lineWidth: 4
+                    }
 
-            catch (error) {
-
-                console.log(
-                    "Autoplay diblokir browser."
                 );
 
-                musicBtn.textContent =
-                    "🎵 Putar Musik";
+
+                drawLandmarks(
+
+                    ctx,
+
+                    landmarks,
+
+                    {
+                        color: "#ffffff",
+                        fillColor: "#00ffff",
+                        lineWidth: 2,
+                        radius: 5
+                    }
+
+                );
+
+
+                const finger =
+                    landmarks[8];
+
+
+                const x =
+                    finger.x *
+                    canvas.width;
+
+
+                const y =
+                    finger.y *
+                    canvas.height;
+
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    x,
+                    y,
+                    18,
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.strokeStyle =
+                    "#00ffff";
+
+                ctx.lineWidth = 3;
+
+                ctx.shadowColor =
+                    "#00ffff";
+
+                ctx.shadowBlur = 25;
+
+                ctx.stroke();
+
+                ctx.shadowBlur = 0;
+
+
+                createParticles(
+                    x,
+                    y,
+                    2
+                );
 
             }
+
+
+            detectGesture(
+                handList
+            );
 
         }
 
+        else {
 
-        /* =================================================
-           COBA AUTOPLAY
-        ================================================= */
+            status.textContent =
+                "👋 Tunjukkan tangan ke kamera";
 
-        window.addEventListener(
-            "load",
-            function() {
+            status.style.color =
+                "#ffffff";
 
-                playMusic();
+            lastGesture = "";
 
-            }
-        );
+            hideMessage();
+
+        }
+
+    }
+);
 
 
-        /* =================================================
-           KLIK PERTAMA
-        ================================================= */
+/* =====================================================
+   CAMERA
+===================================================== */
 
-        document.addEventListener(
+const camera =
+    new Camera(
 
-            "click",
+        video,
 
-            function() {
+        {
 
-                if (music.paused) {
+            onFrame:
+                async function() {
 
-                    playMusic();
+                    await hands.send({
+                        image: video
+                    });
+
+                },
+
+            width: 1280,
+
+            height: 720
+
+        }
+
+    );
+
+
+async function startCamera() {
+
+    try {
+
+        await navigator
+            .mediaDevices
+            .getUserMedia({
+                video: true
+            })
+            .then(
+                stream => {
+
+                    stream
+                        .getTracks()
+                        .forEach(
+                            track =>
+                                track.stop()
+                        );
 
                 }
+            );
 
-            },
 
-            {
-                once: true
-            }
+        camera.start();
 
+
+        status.textContent =
+            "KAMERA AKTIF";
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        status.textContent =
+            "❌ IZINKAN KAMERA";
+
+        status.style.color =
+            "#ff4444";
+
+    }
+
+}
+
+
+startCamera();
+
+
+/* =====================================================
+   MUSIK
+===================================================== */
+
+const music =
+    new Audio("musik.mp3");
+
+music.loop = true;
+music.volume = 0.7;
+music.preload = "auto";
+
+
+/*
+   Browser akan mencoba memainkan
+   musik ketika halaman selesai dimuat.
+*/
+
+async function startMusic() {
+
+    try {
+
+        await music.play();
+
+        musicBtn.textContent =
+            "⏸️ Musik Aktif";
+
+    }
+
+    catch(error) {
+
+        console.log(
+            "Browser memblokir autoplay:",
+            error
         );
 
+        musicBtn.textContent =
+            "🎵 Klik untuk Musik";
 
-        /* =================================================
-           TOMBOL MUSIK
-        ================================================= */
+    }
 
-        musicBtn.addEventListener(
-
-            "click",
-
-            function(event) {
-
-                event.stopPropagation();
+}
 
 
-                if (music.paused) {
+/* =====================================================
+   AUTOPLAY
+===================================================== */
 
-                    playMusic();
+window.addEventListener(
+    "load",
+    function() {
 
-                }
+        startMusic();
 
-                else {
+    }
+);
 
-                    music.pause();
 
-                    musicBtn.textContent =
-                        "🎵 Putar Musik";
+/* =====================================================
+   FALLBACK INTERAKSI
+===================================================== */
 
-                }
+document.addEventListener(
+    "click",
+    function() {
 
-            }
+        if (
+            music.paused
+        ) {
 
-        );
+            startMusic();
 
-    </script>
+        }
+
+    }
+);
+
+
+/* =====================================================
+   TOMBOL MUSIK
+===================================================== */
+
+musicBtn.addEventListener(
+    "click",
+    function(event) {
+
+        event.stopPropagation();
+
+
+        if (
+            music.paused
+        ) {
+
+            startMusic();
+
+        }
+
+        else {
+
+            music.pause();
+
+            musicBtn.textContent =
+                "🎵 Putar Musik";
+
+        }
+
+    }
+);
+
+</script>
 
 </body>
 </html>
