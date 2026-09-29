@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Masbow Hand Motion</title>
+    <link rel="icon" href="data:,">
 
     <!-- MediaPipe -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -436,23 +437,11 @@ let gestureCooldown = 0;
 
 function showMessage(index) {
 
-    message.classList.remove("show");
+    message.textContent = messages[index].text;
+    gestureInfo.textContent = messages[index].gesture;
 
-    message.classList.add("hide");
-
-    setTimeout(() => {
-
-        message.textContent =
-            messages[index].text;
-
-        gestureInfo.textContent =
-            messages[index].gesture;
-
-        message.classList.remove("hide");
-
-        message.classList.add("show");
-
-    }, 150);
+    message.classList.remove("hide");
+    message.classList.add("show");
 
 }
 
@@ -741,9 +730,45 @@ function isLove(
        saling berdekatan.
     */
 
+    const indexThumb1 = distance(hand1[8], hand1[4]);
+    const indexThumb2 = distance(hand2[8], hand2[4]);
+
     return (
-        thumbDistance < 0.20 &&
-        indexDistance < 0.20
+        thumbDistance < 0.28 &&
+        indexDistance < 0.28 &&
+        indexThumb1 < 0.45 &&
+        indexThumb2 < 0.45
+    );
+
+}
+
+
+/* =====================================================
+   DETEKSI KEPALAN TANGAN
+===================================================== */
+
+function isFist(hand) {
+
+    const index = fingerExtended(hand,8,6);
+    const middle = fingerExtended(hand,12,10);
+    const ring = fingerExtended(hand,16,14);
+    const pinky = fingerExtended(hand,20,18);
+
+    return !index && !middle && !ring && !pinky;
+
+}
+
+
+/* =====================================================
+   DETEKSI DUA JEMPOL
+===================================================== */
+
+function isDoubleThumb(handsList) {
+
+    return (
+        handsList.length >= 2 &&
+        thumbUp(handsList[0]) &&
+        thumbUp(handsList[1])
     );
 
 }
@@ -820,15 +845,22 @@ function detectGesture(
        DUA JEMPOL
     ============================================= */
 
-    if (
-        handsList.length >= 2 &&
-        thumbUp(handsList[0]) &&
-        thumbUp(handsList[1])
-    ) {
+    if (isDoubleThumb(handsList)) {
 
-        triggerGesture(
-            "doubleThumb"
-        );
+        triggerGesture("doubleThumb");
+
+        return;
+
+    }
+
+
+    /* =============================================
+       KEPALAN TANGAN
+    ============================================= */
+
+    if (isFist(hand)) {
+
+        triggerGesture("fist");
 
         return;
 
